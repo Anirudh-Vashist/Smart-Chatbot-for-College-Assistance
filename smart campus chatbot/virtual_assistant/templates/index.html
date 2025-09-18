@@ -1,0 +1,340 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Proto-Bot - College Assistant</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <style>
+        :root {
+            --primary-color: #25c4d3;
+            --secondary-color: #1a8c99;
+            --accent-color: #ff6b6b;
+            --text-color: #2d3436;
+            --bot-bg: #f8f9fa;
+            --user-bg: #e3f2fd;
+        }
+
+        body {
+            background-image: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(245,245,245,0.9)), url("{% static 'background.png' %}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        .toggle-container {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 1000;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+
+        .toggle-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            padding: 1rem;
+            border-radius: 50%;
+            cursor: pointer;
+            width: 4rem;
+            height: 4rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .toggle-btn:hover {
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .toggle-btn:focus {
+            outline: 3px solid rgba(37, 196, 211, 0.4);
+        }
+
+        .toggle-btn img {
+            width: 1.5rem;
+            height: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .container {
+            position: fixed;
+            bottom: 6rem;
+            right: 1.5rem;
+            width: min(95vw, 400px);
+            height: min(80vh, 600px);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 1.25rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .container.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.25rem;
+            border-radius: 1.25rem 1.25rem 0 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .chat-header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .chat-window {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 0.75rem 1rem;
+            border-radius: 1rem;
+            line-height: 1.4;
+            animation: messageAppear 0.3s ease;
+        }
+
+        .bot-message {
+            background: var(--bot-bg);
+            align-self: flex-start;
+            border-radius: 1rem 1rem 1rem 0;
+        }
+
+        .user-message {
+            background: var(--user-bg);
+            align-self: flex-end;
+            border-radius: 1rem 1rem 0 1rem;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1rem;
+            border-top: 1px solid rgba(0,0,0,0.1);
+        }
+
+        #user-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 0.75rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        #user-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 196, 211, 0.2);
+        }
+
+        #send-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #send-btn:hover {
+            background: var(--secondary-color);
+            transform: translateY(-1px);
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 0.75rem 1rem;
+            align-self: flex-start;
+        }
+
+        .quick-replies {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            padding: 0.5rem 0;
+        }
+
+        .quick-reply {
+            background: rgba(37, 196, 211, 0.1);
+            color: var(--primary-color);
+            border: 1px solid rgba(37, 196, 211, 0.3);
+            padding: 0.375rem 0.75rem;
+            border-radius: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .quick-reply:hover {
+            background: rgba(37, 196, 211, 0.2);
+        }
+
+        @keyframes messageAppear {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                width: 100vw;
+                height: 100vh;
+                bottom: 0;
+                right: 0;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="toggle-container">
+        <button class="toggle-btn" id="toggle-chat" aria-label="Toggle chat">
+            <img src="{% static 'cb.png' %}" alt="Chat Icon" id="toggle-icon" onerror="handleImageError(this)" width="100" height="100" >
+            <span class="notification-badge" aria-hidden="true"></span>
+        </button>
+    </div>
+
+    <div class="container" id="chat-container" role="dialog" aria-labelledby="chat-header">
+        <div class="chat-header">
+            <img src="{% static '200w.gif' %}" alt="Proto-Bot Avatar" width="60" height="60">
+            <h1 id="chat-header">Proto-Bot</h1>
+        </div>
+        
+        <div class="chat-window" id="chat-box" aria-live="polite">
+            <div class="message bot-message">
+                🎓 Hello! I'm your College Assistant. Ask me about:
+                <div class="quick-replies">
+                    <div class="quick-reply">Admissions</div>
+                    <div class="quick-reply">Courses</div>
+                    <div class="quick-reply">Faculty</div>
+                    <div class="quick-reply">Events</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="typing-indicator">
+            <div class="dot-flashing"></div>
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="user-input" 
+                   placeholder="Ask me anything..."
+                   aria-label="Type your message"
+                   autocomplete="off"
+                   enterkeyhint="send">
+            <button id="send-btn" aria-label="Send message">Send</button>
+        </div>
+    </div>
+
+    <script src="{% static 'script.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatContainer = document.getElementById('chat-container');
+            const toggleBtn = document.getElementById('toggle-chat');
+            const userInput = document.getElementById('user-input');
+            const sendBtn = document.getElementById('send-btn');
+
+            // Chat visibility state
+            let isChatVisible = false;
+
+            // Toggle chat visibility
+            const toggleChat = () => {
+                isChatVisible = !isChatVisible;
+                chatContainer.classList.toggle('visible');
+                toggleBtn.setAttribute('aria-expanded', isChatVisible);
+                if (isChatVisible) userInput.focus();
+            };
+
+            // Toggle button interactions
+            toggleBtn.addEventListener('click', toggleChat);
+            toggleBtn.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') toggleChat();
+            });
+
+            // Message handling
+            const appendMessage = (text, isUser = false) => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+                messageDiv.textContent = text;
+                document.getElementById('chat-box').appendChild(messageDiv);
+                messageDiv.scrollIntoView({ behavior: 'smooth' });
+            };
+
+            // Handle user input
+            const handleSendMessage = async () => {
+                const message = userInput.value.trim();
+                if (!message) return;
+
+                appendMessage(message, true);
+                userInput.value = '';
+
+                // Show typing indicator
+                document.querySelector('.typing-indicator').style.display = 'block';
+
+                try {
+                    const response = await fetch(`/get_response?message=${encodeURIComponent(message)}`);
+                    const data = await response.json();
+                    appendMessage(data.response);
+                } catch (error) {
+                    appendMessage('⚠️ Sorry, I encountered an error. Please try again.');
+                } finally {
+                    document.querySelector('.typing-indicator').style.display = 'none';
+                }
+            };
+
+            // Event listeners
+            sendBtn.addEventListener('click', handleSendMessage);
+            userInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleSendMessage();
+            });
+
+            // Quick reply handling
+            document.querySelectorAll('.quick-reply').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    userInput.value = btn.textContent;
+                    handleSendMessage();
+                });
+            });
+
+            // Image error fallback
+            window.handleImageError = (img) => {
+                img.style.display = 'none';
+                const fallback = document.createElement('div');
+                fallback.className = 'icon-fallback';
+                fallback.textContent = '💬';
+                img.parentNode.appendChild(fallback);
+            };
+        });
+    </script>
+</body>
+</html>

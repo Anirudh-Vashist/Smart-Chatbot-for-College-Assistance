@@ -1,0 +1,206 @@
+/* static/css/style.css */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5; /* Light gray background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+.search-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    border: 1px solid currentColor;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    margin-top: 0.5rem;
+    display: inline-block;
+    transition: all 0.2s ease;
+}
+
+.search-link:hover {
+    background: rgba(37, 196, 211, 0.1);
+    transform: translateY(-1px);
+}
+
+.quick-reply-active {
+    transform: scale(0.95);
+    background: rgba(37, 196, 211, 0.2) !important;
+}
+
+.message a {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+.message img {
+    max-width: 100%;
+    border-radius: 0.5rem;
+    margin-top: 0.5rem;
+}
+.container {
+    background-color: #ffffff; /* Pure white container */
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    width: 320px;
+    text-align: center;
+    position: relative;
+}
+
+.status {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background-color: #25D366; /* WhatsApp-like green */
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+h1 {
+    margin: 5px 0 15px 0;
+    color: #333333;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.bot-intro {
+    background-color: #e5f6fd; /* Very light blue */
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #333333;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.options-list {
+    text-align: left;
+    margin: 12px 0 5px 0;
+    padding-left: 20px;
+    line-height: 1.8;
+    font-size: 14px;
+    color: #444444;
+}
+
+.chat-window {
+    background-color: #f8f9fa; /* Off-white chat background */
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 12px;
+    height: 280px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+}
+
+.bot-message {
+    background-color: #e5f6fd; /* Matching intro bubble */
+    padding: 10px 14px;
+    border-radius: 8px 8px 8px 0;
+    margin-bottom: 8px;
+    text-align: left;
+    max-width: 80%;
+    display: inline-block;
+    font-size: 14px;
+    color: #333333;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+}
+
+.user-message {
+    background-color: #dcf8c6; /* Light green for user */
+    padding: 10px 14px;
+    border-radius: 8px 8px 0 8px;
+    margin-bottom: 8px;
+    text-align: right;
+    max-width: 80%;
+    display: inline-block;
+    float:none;
+    clear: both;
+    font-size: 14px;
+    color: #333333;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.05);
+}
+
+.input-area {
+    display: flex;
+    margin-top: 8px;
+    padding: 5px;
+}
+
+#user-input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid #dddfe2;
+    border-radius: 20px;
+    margin-right: 8px;
+    font-size: 14px;
+    background-color: #f8f9fa;
+    color: #333333;
+}
+
+#user-input:focus {
+    outline: none;
+    border-color: #25D366;
+}
+
+#send-btn {
+    padding: 10px 18px;
+    background-color: #25D366; /* Matching status green */
+    color: #ffffff;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+#send-btn:hover {
+    background-color: #20bd5a; /* Slightly darker green */
+}
+
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+/* Scrollbar styling */
+.chat-window::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-window::-webkit-scrollbar-track {
+    background: #e7dede;
+    border-radius: 3px;
+}
+
+.chat-window::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.chat-window::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+.dot-flashing {
+    position: relative;
+    width: 10px;
+    height: 10px;
+    border-radius: 5px;
+    background-color: #25c4d3;
+    color: #25c4d3;
+    animation: dotFlashing 1s infinite linear;
+}
+
+@keyframes dotFlashing {
+    0% { opacity: 0.2; transform: translateY(0); }
+    50% { opacity: 1; transform: translateY(-3px); }
+    100% { opacity: 0.2; transform: translateY(0); }
+}
